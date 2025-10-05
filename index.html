@@ -1,269 +1,134 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Гра-вікторина: Василь Симоненко — "Лебеді материнства"</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Гра — Василь Симоненко та "Лебеді материнства"</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--accent:#ffcc00;--muted:#9aa4b2;}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:radial-gradient(circle at 10% 10%, #071227 0%, var(--bg) 40%), linear-gradient(180deg, rgba(255,255,255,0.02), transparent); color:#e6eef8;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
-    .wrap{width:100%;max-width:920px}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,#0ea5a4,#6366f1);display:flex;align-items:center;justify-content:center;font-weight:700;color:#081024;font-size:20px;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
-    h1{font-size:20px;margin:0}
-    p.lead{margin:6px 0 18px;color:var(--muted)}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(2,6,23,0.7);}
-
-    .center{display:grid;place-items:center}
-    .btn{background:var(--accent);color:#081024;border:none;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(255,204,0,0.15);}
-    .muted{color:var(--muted)}
-
-    /* Game layout */
-    .game{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:14px}
-    @media (max-width:860px){.game{grid-template-columns:1fr;}.aside{order:2}}
-    .question-card{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));min-height:260px}
-    .q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-    .progress{height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff7a18);width:0%}
-    .question{font-size:18px;margin:8px 0 14px}
-    .answers{display:grid;gap:10px}
-    .answer{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
-    .answer:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
-    .answer.correct{background:linear-gradient(90deg, rgba(34,197,94,0.12), rgba(34,197,94,0.06));border-color:rgba(34,197,94,0.5)}
-    .answer.wrong{background:linear-gradient(90deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03));border-color:rgba(239,68,68,0.4)}
-
-    .aside{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));min-height:260px}
-    .stat{display:flex;flex-direction:column;gap:8px}
-    .big{font-size:36px;font-weight:800}
-    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
-
-    /* small decorative swan */
-    .swan{position:absolute;right:32px;top:20px;opacity:0.06;filter:blur(0.6px);transform:rotate(-8deg);font-size:220px;pointer-events:none}
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #a4c0ff, #ffffff);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    #game {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      padding: 30px;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+    }
+    button {
+      background-color: #4e73df;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background-color: #2e59d9; }
+    .answer { display: block; margin: 10px auto; width: 80%; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">СИ</div>
-      <div>
-        <h1>Гра-вікторина: Василь Симоненко — "Лебеді материнства"</h1>
-        <p class="lead">Інтерактивна гра з питаннями про життя поета і теми вірша. Відповідай, набирай бали та дізнавайся факти.</p>
-      </div>
-    </header>
-
-    <div class="card">
-      <div class="center" id="start-screen">
-        <h2>Почати гру</h2>
-        <p class="muted">8 питань · множник за швидкість · збереження рекорду локально</p>
-        <div style="height:12px"></div>
-        <button class="btn" id="start-btn">Почати</button>
-      </div>
-
-      <div id="game-area" style="display:none">
-        <div class="game">
-          <div class="question-card">
-            <div class="q-header">
-              <div>Питання <strong id="q-index">1</strong> з <span id="q-total">8</span></div>
-              <div style="width:40%">
-                <div class="progress"><i id="progress-fill" style="width:0%"></i></div>
-              </div>
-            </div>
-            <div class="question" id="question-text">Завантаження...</div>
-            <div class="answers" id="answers"></div>
-            <div style="height:12px"></div>
-            <div class="muted">Підказка: відповідай якомога швидше — бонус за швидкість!</div>
-          </div>
-
-          <aside class="aside">
-            <div class="stat">
-              <div>Рахунок</div>
-              <div class="big" id="score">0</div>
-              <div>Час на відповідь: <span id="timer">15</span>с</div>
-              <div>Рекорд: <strong id="highscore">0</strong></div>
-              <div style="height:8px"></div>
-              <button class="btn" id="restart-btn">Почати спочатку</button>
-            </div>
-          </aside>
-        </div>
-
-        <footer>
-          <div class="muted">Гра створена для освітнього використання. Уникаємо цитування авторських рядків — перевіряй оригінали у книгах або бібліотеці.</div>
-        </footer>
-      </div>
-
-      <div id="end-screen" style="display:none" class="center">
-        <h2>Гра завершена!</h2>
-        <p class="muted">Твій рахунок: <strong id="final-score">0</strong></p>
-        <p class="muted">Висновок: <span id="conclusion"></span></p>
-        <div style="height:12px"></div>
-        <button class="btn" id="play-again">Грати ще раз</button>
-      </div>
-    </div>
-
-    <div class="swan">🦢</div>
+  <div id="game">
+    <h1>Гра про Василя Симоненка</h1>
+    <p id="question">Натисни «Почати», щоб розпочати гру!</p>
+    <div id="answers"></div>
+    <button id="startBtn">Почати</button>
   </div>
 
   <script>
-    // Questions bank (Ukrainian). Note: avoid long verbatim quotes of poem.
     const QUESTIONS = [
       {
         q: 'Коли народився Василь Симоненко?',
-        a: ['1935,'1917','1905','1940'],
+        a: ['1935', '1940', '1920', '1955'],
         correct: 0,
-        info: 'Василь Симоненко (1935–1963) — український поет-шістдесятник.'
+        info: 'Василь Симоненко народився 1935 року — відомий український поет.'
       },
       {
         q: '"Лебеді материнства" — це вірш про:',
-        a: ['материнську любов і жертовність','політичну сатиру','торгівлю','міфологічну битву'],
+        a: ['материнську любов і жертовність', 'політичну сатиру', 'міфологію', 'торгівлю'],
         correct: 0,
-        info: 'Тема вірша — глибока материнська любов, турбота, часто з емоційним символізмом.'
+        info: 'Тема вірша — глибока материнська любов і турбота.'
       },
       {
         q: 'Який образ у вірші може символізувати ніжність та захист?',
-        a: ['лебеді','куля','метал','вогонь'],
+        a: ['лебеді', 'вогонь', 'меч', 'дощ'],
         correct: 0,
-        info: 'Лебеді в літературі часто означають красу, ніжність і турботу.'
+        info: 'Лебеді символізують ніжність, красу і турботу.'
       },
       {
         q: 'Який основний настрій переважає у "Лебедях материнства"?',
-        a: ['теплий і бережний','агресивний','комічний','абстрактний'],
+        a: ['теплий і бережний', 'агресивний', 'комічний', 'абстрактний'],
         correct: 0,
         info: 'Вірш передає тепло, оберігання і ніжність.'
       },
       {
-        q: 'Де найкраще шукати справжній текст вірша та біографію поета?',
-        a: ['в бібліотеці або в академічних виданнях','в соцмережах лише','на анонімних форумах','в рекламних буклетах'],
-        correct: 0,
-        info: 'Офіційні видання і бібліотеки — кращі джерела для цитат і біографій.'
-      },
-      {
         q: 'Що допомагає створити образ матері в поезії Симоненка?',
-        a: ['символи природи, побутові деталі та емоційна лексика','технологічні описи','математика','космічна термінологія'],
+        a: ['символи природи, побутові деталі та емоційна лексика', 'технологічні описи', 'математика', 'космос'],
         correct: 0,
         info: 'Природа й проста побутова образність підсилюють образ матері.'
-      },
-      {
-        q: 'Що знижує шанс розуміння поезії?',
-        a: ['ігнорування контексту і часу створення','уважне читання','пошук інтерпретацій','вивчення життя автора'],
-        correct: 0,
-        info: 'Контекст і біографія автора важливі для правильного тлумачення.'
       }
     ];
 
-    // Game state
-    let idx = 0; let score = 0; let timer = null; let timeLeft = 15; const total = QUESTIONS.length;
-    const qIndexEl = document.getElementById('q-index');
-    const qTotalEl = document.getElementById('q-total'); qTotalEl.textContent = total;
-    const qText = document.getElementById('question-text');
+    let current = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById('question');
     const answersEl = document.getElementById('answers');
-    const progressFill = document.getElementById('progress-fill');
-    const scoreEl = document.getElementById('score');
-    const timerEl = document.getElementById('timer');
-    const highscoreEl = document.getElementById('highscore');
+    const startBtn = document.getElementById('startBtn');
 
-    // load highscore
-    let high = parseInt(localStorage.getItem('symonenko_high') || '0',10); highscoreEl.textContent = high;
+    startBtn.onclick = startGame;
 
-    function startGame(){
-      idx = 0; score = 0; scoreEl.textContent = score; document.getElementById('start-screen').style.display='none';
-      document.getElementById('end-screen').style.display='none'; document.getElementById('game-area').style.display='block';
-      nextQuestion();
+    function startGame() {
+      startBtn.classList.add('hidden');
+      current = 0;
+      score = 0;
+      showQuestion();
     }
 
-    function playTone(freq, dur=0.09){
-      try{
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const o = ctx.createOscillator(); const g = ctx.createGain();
-        o.type='sine'; o.frequency.value = freq; g.gain.value = 0.06; o.connect(g); g.connect(ctx.destination);
-        o.start(); g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur); setTimeout(()=>{o.stop();ctx.close();}, dur*1000+50);
-      }catch(e){/* audio blocked */}
-    }
-
-    function nextQuestion(){
-      if(idx>=total){endGame(); return}
-      const q = QUESTIONS[idx]; qIndexEl.textContent = idx+1; qText.textContent = q.q;
-      progressFill.style.width = Math.round((idx/total)*100) + '%';
-      renderAnswers(q);
-      startTimer();
-    }
-
-    function renderAnswers(q){
-      answersEl.innerHTML='';
-      q.a.forEach((t,i)=>{
-        const b = document.createElement('div'); b.className='answer'; b.tabIndex=0; b.textContent = t;
-        b.addEventListener('click',()=>selectAnswer(i,b,q.correct,q.info));
-        b.addEventListener('keydown',(e)=>{if(e.key==='Enter') b.click();});
-        answersEl.appendChild(b);
+    function showQuestion() {
+      const q = QUESTIONS[current];
+      questionEl.textContent = q.q;
+      answersEl.innerHTML = '';
+      q.a.forEach((ans, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = ans;
+        btn.className = 'answer';
+        btn.onclick = () => checkAnswer(i);
+        answersEl.appendChild(btn);
       });
     }
 
-    function startTimer(){
-      clearInterval(timer); timeLeft=15; timerEl.textContent=timeLeft;
-      timer = setInterval(()=>{
-        timeLeft--; timerEl.textContent=timeLeft; if(timeLeft<=0){clearInterval(timer); autoWrong();}
-      },1000);
-    }
-
-    function autoWrong(){
-      // mark none selected and proceed
-      playTone(220,0.12);
-      flashAnswers(null,false,'Час вичерпано');
-      setTimeout(()=>{idx++; nextQuestion();},900);
-    }
-
-    function selectAnswer(choice,el,correct,info){
-      clearInterval(timer);
-      const all = [...answersEl.children];
-      all.forEach(a=>a.style.pointerEvents='none');
-      if(choice===correct){
-        el.classList.add('correct');
-        // points: base 100 + timeLeft*10
-        const points = 100 + (timeLeft*10);
-        score += points; scoreEl.textContent = score; playTone(880,0.08);
+    function checkAnswer(i) {
+      const q = QUESTIONS[current];
+      if (i === q.correct) {
+        alert('Правильно! ' + q.info);
+        score++;
       } else {
-        el.classList.add('wrong');
-        // show correct
-        all[correct].classList.add('correct'); playTone(220,0.2);
+        alert('Неправильно. ' + q.info);
       }
-      // small info tooltip (accessible)
-      const infoEl = document.createElement('div'); infoEl.style.marginTop='10px'; infoEl.className='muted'; infoEl.textContent = info;
-      document.querySelector('.question-card').appendChild(infoEl);
-      // next
-      setTimeout(()=>{idx++; nextQuestion();},1100);
+      current++;
+      if (current < QUESTIONS.length) showQuestion();
+      else endGame();
     }
 
-    function flashAnswers(){/* unused placeholder for effects*/}
-
-    function endGame(){
-      document.getElementById('game-area').style.display='none'; document.getElementById('end-screen').style.display='block';
-      document.getElementById('final-score').textContent = score;
-      progressFill.style.width = '100%';
-      // conclusion
-      const concl = score >= 600 ? 'Вітаю! Ти добре знаєш Симоненка й тему вірша.' : (score >= 300 ? 'Непогано — але можна ще підчитати твори.' : 'Спробуй ще раз: зверни увагу на контекст і біографію.');
-      document.getElementById('conclusion').textContent = concl;
-      // highscore handling
-      if(score>high){ high = score; localStorage.setItem('symonenko_high', String(high)); document.getElementById('highscore').textContent = high; document.getElementById('conclusion').textContent += ' Новий рекорд!'; }
+    function endGame() {
+      questionEl.textContent = `Гру завершено! Твій рахунок: ${score}/${QUESTIONS.length}`;
+      answersEl.innerHTML = '';
+      startBtn.textContent = 'Грати знову';
+      startBtn.classList.remove('hidden');
     }
-
-    // buttons
-    document.getElementById('start-btn').addEventListener('click', startGame);
-    document.getElementById('restart-btn').addEventListener('click', ()=>{location.reload();});
-    document.getElementById('play-again').addEventListener('click', ()=>{location.reload();});
-
-    // keyboard shortcuts
-    document.addEventListener('keydown', (e)=>{
-      if(document.getElementById('game-area').style.display==='block'){
-        if(e.key>='1' && e.key<='4'){ const idxKey = parseInt(e.key,10)-1; const btn = answersEl.children[idxKey]; if(btn) btn.click(); }
-      }
-    });
-
-    // small accessibility: focus first answer on render
-    const obs = new MutationObserver(()=>{ if(answersEl.firstChild) answersEl.firstChild.focus(); });
-    obs.observe(answersEl,{childList:true});
-
-    // friendly note: encourage user to read original poem
-    console.log('Гра завантажена — читай оригінал вірша у виданих джерелах для глибшого розуміння.');
   </script>
 </body>
 </html>
